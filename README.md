@@ -56,6 +56,74 @@ line pattern CD(스펙 1 ± 0.1㎛)의 웨이퍼 내 산포 판독
 </details>
 
 <details>
+<summary><b>ezSPC 기반 공정 데이터 분석 실습</b></summary>
+
+[기간] 2026.07
+
+[핵심 수행]
+- Deming's Funnel 실험으로 과조정(Tampering) 효과 확인: 관리도에서 점 하나가 튈 때마다 바로 조정하면 오히려 산포가 커짐
+- CVD Deposition Time–Film Thickness 산점도 해석 및 두께 이상 시 함께 확인할 장비 로그(진공 압력·온도·가스 농도) 정리
+- 설비 알람 파레토 분석 후 상위 항목(RF Match Fail, Pressure Unstable, MFC Alarm, Robot Error, Temp Interlock, Endpoint Fail)별 주요 원인 정리
+
+</details>
+
+<details>
+<summary><b>수율 저하 Lot 원인 분석 (Photo·Etch·Cleaning)</b></summary>
+
+[기간] 2026.07
+
+[상황 및 과제]
+36개 Lot의 Read Fail·최종 수율 데이터에서 저수율 Lot의 원인 장비와 원인 파라미터 특정
+
+[핵심 수행]
+- 문제 Lot 추적: 파레토·히스토그램·Lot별 박스 플롯으로 저수율 Lot(10, 17, 20, 25, 27) 선별, 공정별 사용 장비를 대조해 모두 P3(Photo) → E2(Etch) → C2(Cleaning) 경로를 거쳤음을 확인
+- Photo(P3): Cp 3.18로 산포는 양호하나 Cpk 1.79로 다른 장비(3.26, 2.78) 대비 낮음 → 산포가 아닌 Overlay 중심 이탈로 판단, Chuck·Reticle 보정 필요 파라미터로 도출
+- Etch(E2): Mean Etch Rate 평균 291.4(타겟 300), Cpk 1.48. 상관 분석(Source RF Power r=0.95, ESC 온도 r=-0.93, Chamber Pressure–Uniformity r=0.86)으로 RF Power·챔버 압력·ESC 온도를 조정 대상으로 도출
+- Cleaning(C2): DIW 유량 평균 1913(타 장비 2003·2018), Cpk 1.65로 LSL 쪽 치우침. 공급압력·노즐압력 저하와 Filter 차압 증가가 함께 나타나 Filter 막힘 등 유체 공급 계통 이상을 우선 점검 대상으로 제시
+
+[성과]
+저수율 원인을 3개 공정의 특정 장비 조합으로 좁히고, 공정별 조정 파라미터와 방향 제시. 높은 Cp·Cpk 값만으로는 타겟 이탈을 놓칠 수 있다는 점을 데이터로 확인
+
+</details>
+
+<details>
+<summary><b>[팀 프로젝트] 후공정 불량 원인 분석 및 개선 제안 (BG·SAW·Mold·Die Attach)</b></summary>
+
+[기간] 2026.08 ~ 2026.09
+
+[구성] 4조 5인 팀 프로젝트
+
+[상황 및 과제]
+후공정 불량 시뮬레이션 데이터 20,000 Lot(최종 수율 17.3%)을 공정별로 나눠 불량 원인을 특정하고 개선 우선순위 제안
+
+**① Back Grinding (BG)**
+- BG 전후 비교: Scratch는 공정 후 약 58% 감소(전후 r=0.466)했지만 Crack은 약 13% 증가(전후 r=-0.007) → BG 공정이 새 Crack을 만들고 있다고 판단
+- 공정능력 평가: Crack 변화량 3개 초과 시 불량률 100%를 규격 기준으로 설정, UCL(5.56)이 규격(3.0)보다 커서 Cpk 0.156 → 관리선과 규격이 맞지 않는 구조적 문제
+- 원인 특정: Align Overlay와 Crack의 상관은 거의 없고(r=0.013), 공정 후 TTV와 Crack의 상관이 높음(r=0.694)
+- 개선안: TTV 3㎛ 기준 스크리닝, Wheel 교체주기 관리, SPC 알람 및 인터락 제안
+
+**② SAW**
+- Kerf Width X̄·Range 구간 분석으로 Out of control 기준선 역추적, 20,000 Lot 중 19,996건 일치(99.98%)
+- Blade 마모도와 Sawing Speed의 강한 상관(r=0.863) 확인, 마모도 80% 이상 구간에서 Range가 3.0을 넘는 이상치 급증
+- 개선안: Blade 마모도 70% 이하, Sawing Speed 28 이하로 관리하고 마모도 기준 자동 교체(인터락) 제안
+
+**③ Mold**
+- Mold 기인 불량(Offset·Void)이 전체 불량 16,541건 중 7,360건(43%)
+- Offset: MOLD_C 장비 Cpk -0.076, 규격 초과율 48%. 장비×위치 분석에서 MOLD_C 우측 금형의 Offset이 28㎛로 두드러짐 → 우측 금형 마모·수평 정렬 점검 제안
+- Void: 제품군별 ANOVA(Welch F=13,424, p<0.001)에서 Product Type이 Void 변동의 60.5%를 설명. Type B 평균 5.46건 vs Type C 0.51건 → 공정 조건보다 제품 구조(수지 흐름 경로) 문제로 판단
+
+**④ Die Attach**
+- 장비별 Crack 불량률 EQ_A 21.3%, EQ_B 49.9%, EQ_C 31.7% → Head·Epoxy Batch와 무관하게 EQ_B에서 높음
+- 전체 상관(r=0.148)과 달리 장비별로는 Offset–Crack 상관이 사라지고, 로지스틱 회귀(오즈비: Pressure 1.45배, Speed 0.79배, Offset 0.99배)로 Offset 영향 배제
+- Pressure×Speed 교차 분석: 최악 조건 Crack률 52.4% vs 최적 조건(Pressure 54.8N 이하·Speed 54.2mm/s 이상) 19.7%
+- 개선안: EQ_B Set-up 진단, 최적 조건 적용, Rubber Collet 교체 검토, 장비 도입 시 캘리브레이션 SOP 제안
+
+[성과]
+4개 후공정의 불량 원인을 장비·조건·제품 단위로 특정하고, 효과×난이도 매트릭스로 단기·중기·장기 개선안 도출
+
+</details>
+
+<details>
 <summary><b>AI 활용 공정 데이터 분석·시각화 자동화 도구</b></summary>
 
 [기간] 2026.08
@@ -81,7 +149,28 @@ line pattern CD(스펙 1 ± 0.1㎛)의 웨이퍼 내 산포 판독
 
 ### 코멘토 생산기술 부트캠프
 - 기간 : 22.07 ~ 22.08
-- 주요 내용 : APQP, FMEA, Modapts(UPH 75.0), 4M 대책, MES Fool-Proof, 레이아웃·M-BOM·작업표준서
+- 주요 내용 : APQP, FMEA, Modapts, 4M 대책, MES Fool-Proof, 레이아웃·M-BOM·작업표준서
+
+<details>
+<summary><b>스케이트보드 신규 라인 생산 설계</b></summary>
+
+[기간] 2022.07 ~ 2022.08
+
+[역할] 공정 설계 및 표준시간 산정
+
+[상황 및 과제]
+연간 10만 대 생산을 전제로 신규 모델의 조립 라인을 설계하고 필요 인원과 공정 배분을 산출하는 과제 수행
+
+[핵심 수행]
+- M-BOM 작성 및 공정 분할: 제품 BOM을 조립 순서 기준으로 재구성해 M-BOM을 작성하고, 그립시트 부착·Truck assy 조립·바퀴 조립 3개 공정으로 분할
+- 표준시간 산정: Modapts로 각 동작을 기호 단위로 분해하고 1MOD 0.129초와 보조공수 12%를 적용해 공정별 표준시간 산정, 총 공수 125.10초 도출
+- 라인 밸런싱: 연간 240일·8시간 조건에서 요구 UPH 208.33과 C/T 17.28초를 산출하고, 총 공수를 C/T로 나눠 필요 인원 8명 확정 후 각 작업을 C/T 내에 배분
+- 불량 대책 수립: Pilot 단계 불량 사례를 4M 관점으로 분석해, 볼트 유입은 확인 작업 추가로, 볼트 미체결은 전동툴 F/PROOF 기능 세팅과 FMEA 갱신으로 근본 대책 수립
+
+[성과]
+산출 근거를 M-BOM, 표준 시간표, 라인 밸런싱표, 4M 대책서로 정리. 연간 10만 대 목표를 시간당 208대, 1대당 17.28초로 환산하고 총 125.10초의 작업을 8명이 나눠 맡도록 편성
+
+</details>
 
 # 수상
 ### 수상 1
@@ -248,6 +337,7 @@ YOLO 기반 점자 검출 모델 구축
 ### 자격 1
 * 6Sigma(시그마) Green Belt (한국자격검정평가진흥원)
 * 취득일 : 2026.08
+* 증빙서류 : [6sigma_배한성.pdf](./docs/6sigma_배한성.pdf)
 
 ### 자격 2
 * 자동차운전면허 1종 보통 (대구광역시경찰청)
