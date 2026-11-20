@@ -1,2 +1,2 @@
 # FI-05-06_BHS
-  fabless
+  fabless internship 5th class
